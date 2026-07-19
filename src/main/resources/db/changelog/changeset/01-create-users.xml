@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create_users" author="Ivan_Mukha">
+    <createTable tableName="users">
+        <column name="id" type="BIGINT">
+            <constraints primaryKey="true"/>
+        </column>
+        <column name="name" type="VARCHAR(30)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="surname" type="VARCHAR(30)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="birth_date" type="DATE">
+            <constraints nullable="false"/>
+        </column>
+        <column name="email" type="VARCHAR(50)">
+            <constraints nullable="false"
+                         unique="true"
+                         uniqueConstraintName="uq_email_users"/>
+        </column>
+        <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+            <constraints nullable="false"/>
+        </column>
+        <column name="created_at" type="TIMESTAMP">
+        </column>
+        <column name="updated_at" type="TIMESTAMP">
+        </column>
+
+    </createTable>
+</changeSet>
+</databaseChangeLog>
