@@ -5,13 +5,22 @@ import com.IvanMukha.UserService.model.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class PaymentCardSpecification {
-        public static Specification<PaymentCard> hasHolder(String holder) {
-            return (root, query, criteriaBuilder) -> {
-                if (holder == null || holder.isBlank()) {
-                    return criteriaBuilder.conjunction();
-                }
-                return criteriaBuilder.like(criteriaBuilder.lower(root.get("holder")), "%" + holder.strip().toLowerCase() + "%");
-            };
+    public static Specification<PaymentCard> hasHolder(String holder) {
+        return (root, query, criteriaBuilder) -> {
+            if (holder == null || holder.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("holder")), "%" + holder.strip().toLowerCase() + "%");
+        };
 
-        }
+    }
+
+    public static Specification<PaymentCard> hasUserId(Long userId) {
+        return (root, query, criteriaBuilder) -> {
+            if (userId == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("user").get("id"), userId);
+        };
+    }
 }

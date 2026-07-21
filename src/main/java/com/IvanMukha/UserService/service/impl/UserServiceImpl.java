@@ -1,12 +1,13 @@
 package com.IvanMukha.UserService.service.impl;
 
 import com.IvanMukha.UserService.DTO.UserDTO;
+import com.IvanMukha.UserService.exeption.EmailAlreadyExistsException;
+import com.IvanMukha.UserService.exeption.UserNotFoundException;
 import com.IvanMukha.UserService.mapper.UserMapper;
 import com.IvanMukha.UserService.model.User;
 import com.IvanMukha.UserService.repository.UserRepository;
 import com.IvanMukha.UserService.service.UserService;
 import com.IvanMukha.UserService.specification.UserSpecification;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +24,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO save(UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new EmailAlreadyExistsException(userDTO.getEmail());
+        }
         return userMapper.toDTO(userRepository.save(userMapper.toModel(userDTO)));
     }
 
     @Override
     public UserDTO getById(Long id) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with this id:" + id + "not found"));
+        User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return userMapper.toDTO(foundUser);
     }
 
@@ -43,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO updateById(Long id, UserDTO userDTO) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with this" + id + "not found"));
+        User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         User updatedUser = userMapper.toModelUpdate(userDTO, foundUser);
         return userMapper.toDTO(userRepository.save(updatedUser));
 
@@ -51,8 +55,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changeUserStatus(Long id, boolean isActive) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with this" + id + "not found"));
+    public void changeUserStatus(Long id, Boolean isActive) {
+        User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         foundUser.setActive(isActive);
         userRepository.save(foundUser);
     }

@@ -9,10 +9,10 @@ public interface UserService {
 
     UserDTO getById(Long id);
 
-    Page<UserDTO> getAll(String name, String surname,Pageable pageable);
+    Page<UserDTO> getAll(String name, String surname, Pageable pageable);
 
     UserDTO updateById(Long id, UserDTO userDTO);
 
-    void changeUserStatus(Long id, boolean isActive);
+    void changeUserStatus(Long id, Boolean isActive);
 
 }

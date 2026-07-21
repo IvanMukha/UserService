@@ -9,9 +9,7 @@ public interface PaymentCardService {
 
     PaymentCardDTO getById(Long id);
 
-    Page<PaymentCardDTO> getAllByUserId(Long userId, Pageable pageable);
-
-    Page<PaymentCardDTO> getAll(String holder, Pageable pageable);
+    Page<PaymentCardDTO> getAll(Long userId, String holder, Pageable pageable);
 
     PaymentCardDTO updateById(Long id, PaymentCardDTO paymentCardDTO);
 
