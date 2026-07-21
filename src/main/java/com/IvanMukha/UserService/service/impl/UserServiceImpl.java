@@ -9,6 +9,9 @@ import com.IvanMukha.UserService.repository.UserRepository;
 import com.IvanMukha.UserService.service.UserService;
 import com.IvanMukha.UserService.specification.UserSpecification;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public UserDTO getById(Long id) {
         User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return userMapper.toDTO(foundUser);
@@ -46,6 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CachePut(value = "users",key = "#id")
     public UserDTO updateById(Long id, UserDTO userDTO) {
         User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         User updatedUser = userMapper.toModelUpdate(userDTO, foundUser);
@@ -55,6 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "users",key = "#id")
     public void changeUserStatus(Long id, Boolean isActive) {
         User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         foundUser.setActive(isActive);

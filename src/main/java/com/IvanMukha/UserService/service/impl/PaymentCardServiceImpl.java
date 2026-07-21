@@ -10,6 +10,9 @@ import com.IvanMukha.UserService.repository.PaymentCardRepository;
 import com.IvanMukha.UserService.service.PaymentCardService;
 import com.IvanMukha.UserService.specification.PaymentCardSpecification;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +40,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
+    @Cacheable(value = "cards",key = "#id")
     public PaymentCardDTO getById(Long id) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         return paymentCardMapper.toDTO(foundPaymentCard);
@@ -52,6 +56,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @CachePut(value = "cards",key = "#id")
     public PaymentCardDTO updateById(Long id, PaymentCardDTO paymentCardDTO) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         PaymentCard updatedPaymentCard = paymentCardMapper.toModelUpdate(paymentCardDTO, foundPaymentCard);
@@ -60,6 +65,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "cards", key = "#id")
     public void changePaymentCardStatus(Long id, Boolean isActive) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         foundPaymentCard.setActive(isActive);
