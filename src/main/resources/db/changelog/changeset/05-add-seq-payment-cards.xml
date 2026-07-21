@@ -3,5 +3,10 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <includeAll path="db/changelog/changeset/"/>
+
+    <changeSet id="add_seq_payment_card" author="Ivan_Mukha">
+        <createSequence sequenceName="payment_card_seq"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
 </databaseChangeLog>
