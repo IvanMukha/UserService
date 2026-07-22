@@ -14,7 +14,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 public abstract class AbstractIntegrationTest {
 
     static final PostgreSQLContainer<?> postgres =
