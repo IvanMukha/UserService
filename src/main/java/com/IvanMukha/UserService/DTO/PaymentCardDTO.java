@@ -20,8 +20,6 @@ public class PaymentCardDTO implements Serializable {
     @NotNull(message = "user_id cannot be null")
     private Long userId;
     @NotBlank(message = "card number cannot be empty")
-    @Size(min = 13, max = 19, message = "Card number must be from 13 to 19 characters")
-    @Pattern(regexp = "^[0-9]+$", message = "Card number must contain digits only")
     private String number;
     private String holder;
     @NotNull(message = "expirationDate cannot be null")

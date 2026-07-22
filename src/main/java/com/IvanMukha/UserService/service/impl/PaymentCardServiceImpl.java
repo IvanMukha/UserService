@@ -4,9 +4,12 @@ import com.IvanMukha.UserService.DTO.PaymentCardDTO;
 import com.IvanMukha.UserService.exeption.CardAlreadyExistsException;
 import com.IvanMukha.UserService.exeption.CardLimitExceededException;
 import com.IvanMukha.UserService.exeption.PaymentCardNotFoundException;
+import com.IvanMukha.UserService.exeption.UserNotFoundException;
 import com.IvanMukha.UserService.mapper.PaymentCardMapper;
 import com.IvanMukha.UserService.model.PaymentCard;
+import com.IvanMukha.UserService.model.User;
 import com.IvanMukha.UserService.repository.PaymentCardRepository;
+import com.IvanMukha.UserService.repository.UserRepository;
 import com.IvanMukha.UserService.service.PaymentCardService;
 import com.IvanMukha.UserService.specification.PaymentCardSpecification;
 import lombok.AllArgsConstructor;
@@ -25,6 +28,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     private PaymentCardRepository paymentCardRepository;
     private PaymentCardMapper paymentCardMapper;
+    private UserRepository userRepository;
 
     @Override
     @Transactional
@@ -36,11 +40,15 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         if (paymentCardRepository.existsByNumber(paymentCardDTO.getNumber())) {
             throw new CardAlreadyExistsException(paymentCardDTO.getNumber());
         }
-        return paymentCardMapper.toDTO(paymentCardRepository.save(paymentCardMapper.toModel(paymentCardDTO)));
+        User paymentCardOwner = userRepository.findById(paymentCardDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(paymentCardDTO.getUserId()));
+        PaymentCard savedPaymentCard = paymentCardMapper.toModel(paymentCardDTO);
+        savedPaymentCard.setUser(paymentCardOwner);
+        return paymentCardMapper.toDTO(paymentCardRepository.save(savedPaymentCard));
     }
 
     @Override
-    @Cacheable(value = "cards",key = "#id")
+    @Cacheable(value = "cards", key = "#id")
     public PaymentCardDTO getById(Long id) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         return paymentCardMapper.toDTO(foundPaymentCard);
@@ -56,7 +64,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
-    @CachePut(value = "cards",key = "#id")
+    @CachePut(value = "cards", key = "#id")
     public PaymentCardDTO updateById(Long id, PaymentCardDTO paymentCardDTO) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         PaymentCard updatedPaymentCard = paymentCardMapper.toModelUpdate(paymentCardDTO, foundPaymentCard);

@@ -11,7 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface PaymentCardRepository extends JpaRepository<PaymentCard, Long>, JpaSpecificationExecutor<PaymentCard> {
     long countByUserId(Long userId);
 
-    Page<PaymentCard> findAllByUserId(Long userId, Pageable pageable);
-
     boolean existsByNumber(String number);
 }
