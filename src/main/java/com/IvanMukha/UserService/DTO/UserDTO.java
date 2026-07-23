@@ -28,5 +28,5 @@ public class UserDTO implements Serializable {
     private String email;
     @NotNull(message = "active status cannot be null")
     private Boolean active;
-    List<PaymentCard> paymentCards;
+    private List<PaymentCard> paymentCards;
 }
