@@ -115,10 +115,11 @@ jobs:
       - name: SonarQube Quality Gate Check
         uses: sonarsource/sonarqube-quality-gate-action@cf038b0e0cdecfa9e56c198bbb7d21d751d62c3b
         timeout-minutes: 5
+        with:
+          scanMetadataReportFile: target/sonar/report-task.txt
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          with:
-            scanMetadataReportFile: target/sonar/report-task.txt
+          SONAR_HOST_URL: ${{ secrets.SONAR.HOST_URL }}
 
   docker-build:
     name: Artefact Creation (Docker Image)
