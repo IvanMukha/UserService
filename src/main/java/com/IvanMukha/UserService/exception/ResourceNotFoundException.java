@@ -1,4 +1,4 @@
-package com.IvanMukha.UserService.exeption;
+package com.IvanMukha.UserService.exception;
 
 public abstract class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(Long id, Class<?> entityType) {

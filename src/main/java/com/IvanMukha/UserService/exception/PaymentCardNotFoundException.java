@@ -1,4 +1,4 @@
-package com.IvanMukha.UserService.exeption;
+package com.IvanMukha.UserService.exception;
 
 import com.IvanMukha.UserService.model.PaymentCard;
 

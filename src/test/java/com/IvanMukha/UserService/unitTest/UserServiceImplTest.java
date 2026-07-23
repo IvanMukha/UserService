@@ -1,8 +1,8 @@
 package com.IvanMukha.UserService.unitTest;
 
 import com.IvanMukha.UserService.DTO.UserDTO;
-import com.IvanMukha.UserService.exeption.EmailAlreadyExistsException;
-import com.IvanMukha.UserService.exeption.UserNotFoundException;
+import com.IvanMukha.UserService.exception.EmailAlreadyExistsException;
+import com.IvanMukha.UserService.exception.UserNotFoundException;
 import com.IvanMukha.UserService.mapper.UserMapper;
 import com.IvanMukha.UserService.model.User;
 import com.IvanMukha.UserService.repository.UserRepository;

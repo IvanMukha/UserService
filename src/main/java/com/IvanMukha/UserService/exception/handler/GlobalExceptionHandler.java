@@ -1,9 +1,9 @@
-package com.IvanMukha.UserService.exeption.handler;
+package com.IvanMukha.UserService.exception.handler;
 
-import com.IvanMukha.UserService.exeption.CardAlreadyExistsException;
-import com.IvanMukha.UserService.exeption.CardLimitExceededException;
-import com.IvanMukha.UserService.exeption.EmailAlreadyExistsException;
-import com.IvanMukha.UserService.exeption.ResourceNotFoundException;
+import com.IvanMukha.UserService.exception.CardAlreadyExistsException;
+import com.IvanMukha.UserService.exception.CardLimitExceededException;
+import com.IvanMukha.UserService.exception.EmailAlreadyExistsException;
+import com.IvanMukha.UserService.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,17 +16,17 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(CardLimitExceededException.class)
-    public ResponseEntity<?> handleCardLimitExceeded(CardLimitExceededException e) {
+    public ResponseEntity<String> handleCardLimitExceeded(CardLimitExceededException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
+    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException e) {
+    public ResponseEntity<Map<String,String>> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
@@ -35,17 +35,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<?> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
+    public ResponseEntity<String> handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
     @ExceptionHandler(CardAlreadyExistsException.class)
-    public ResponseEntity<?> handleCardAlreadyExistsException(CardAlreadyExistsException e) {
+    public ResponseEntity<String> handleCardAlreadyExistsException(CardAlreadyExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(Exception e) {
+    public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: " + e.getMessage());
     }
 }

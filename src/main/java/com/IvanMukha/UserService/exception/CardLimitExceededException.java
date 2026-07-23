@@ -1,4 +1,4 @@
-package com.IvanMukha.UserService.exeption;
+package com.IvanMukha.UserService.exception;
 
 public class CardLimitExceededException extends RuntimeException {
     public CardLimitExceededException(Long userId, long currentCount) {

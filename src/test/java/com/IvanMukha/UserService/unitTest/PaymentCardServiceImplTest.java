@@ -1,9 +1,9 @@
 package com.IvanMukha.UserService.unitTest;
 
 import com.IvanMukha.UserService.DTO.PaymentCardDTO;
-import com.IvanMukha.UserService.exeption.CardAlreadyExistsException;
-import com.IvanMukha.UserService.exeption.CardLimitExceededException;
-import com.IvanMukha.UserService.exeption.PaymentCardNotFoundException;
+import com.IvanMukha.UserService.exception.CardAlreadyExistsException;
+import com.IvanMukha.UserService.exception.CardLimitExceededException;
+import com.IvanMukha.UserService.exception.PaymentCardNotFoundException;
 import com.IvanMukha.UserService.mapper.PaymentCardMapper;
 import com.IvanMukha.UserService.model.PaymentCard;
 import com.IvanMukha.UserService.model.User;
