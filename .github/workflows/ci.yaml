@@ -117,9 +117,7 @@ jobs:
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          with:
-            scanMetadataReportFile: target/sonar/report-task.txt
-
+          SONAR_HOST_URL: ${{ secrets.SONAR.HOST_URL }}
   docker-build:
     name: Artefact Creation (Docker Image)
     runs-on: ubuntu-latest
