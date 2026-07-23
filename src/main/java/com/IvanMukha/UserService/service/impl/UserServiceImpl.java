@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value = "users", key = "#id")
     public UserDTO getById(Long id) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        User foundUser = userRepository.findByIdWithPaymentCards(id).orElseThrow(() -> new UserNotFoundException(id));
         return userMapper.toDTO(foundUser);
     }
 
@@ -53,6 +53,9 @@ public class UserServiceImpl implements UserService {
     @CachePut(value = "users",key = "#id")
     public UserDTO updateById(Long id, UserDTO userDTO) {
         User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new EmailAlreadyExistsException(userDTO.getEmail());
+        }
         User updatedUser = userMapper.toModelUpdate(userDTO, foundUser);
         return userMapper.toDTO(userRepository.save(updatedUser));
 

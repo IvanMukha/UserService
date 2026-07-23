@@ -9,16 +9,16 @@
         <column name="id" type="BIGINT">
             <constraints primaryKey="true"/>
         </column>
-        <column name="name" type="VARCHAR(30)">
+        <column name="name" type="VARCHAR(255)">
             <constraints nullable="false"/>
         </column>
-        <column name="surname" type="VARCHAR(30)">
+        <column name="surname" type="VARCHAR(255)">
             <constraints nullable="false"/>
         </column>
         <column name="birth_date" type="DATE">
             <constraints nullable="false"/>
         </column>
-        <column name="email" type="VARCHAR(50)">
+        <column name="email" type="VARCHAR(255)">
             <constraints nullable="false"
                          unique="true"
                          uniqueConstraintName="uq_email_users"/>

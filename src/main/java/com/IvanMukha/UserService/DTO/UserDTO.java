@@ -1,5 +1,6 @@
 package com.IvanMukha.UserService.DTO;
 
+import com.IvanMukha.UserService.model.PaymentCard;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +28,5 @@ public class UserDTO implements Serializable {
     private String email;
     @NotNull(message = "active status cannot be null")
     private Boolean active;
+    List<PaymentCard> paymentCards;
 }

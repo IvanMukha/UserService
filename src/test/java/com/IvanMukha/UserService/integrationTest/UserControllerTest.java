@@ -99,10 +99,12 @@ public class UserControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.name").value("name cannot be empty"))
-                .andExpect(jsonPath("$.email").value("email must be valid"))
-                .andExpect(jsonPath("$.birthDate").value("birth date cannot be null"))
-                .andExpect(jsonPath("$.active").value("active status cannot be null"));
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.detail").value("One or more field not valid"))
+                .andExpect(jsonPath("$.invalid_fields.name").value("name cannot be empty"))
+                .andExpect(jsonPath("$.invalid_fields.email").value("email must be valid"))
+                .andExpect(jsonPath("$.invalid_fields.birthDate").value("birth date cannot be null"))
+                .andExpect(jsonPath("$.invalid_fields.active").value("active status cannot be null"));
 
         assertThat(userRepository.findAll()).isEmpty();
     }
@@ -116,7 +118,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.birthDate").value("birth day must be in the past"));
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.detail").value("One or more field not valid"))
+                .andExpect(jsonPath("$.invalid_fields.birthDate").value("birth day must be in the past"));
     }
 
     @Test
@@ -191,9 +195,9 @@ public class UserControllerTest extends AbstractIntegrationTest {
 
     @Test
     void updateById_shouldUpdateUserInDb() throws Exception {
-        User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
+        User saved = userRepository.save(userEntity("myEmail@1gmail.com", "Ivan", "Mukha"));
 
-        UserDTO update = buildUserDTO("myEmail@gmail.com");
+        UserDTO update = buildUserDTO("myEmail1@gmail.com");
         update.setName("UpdatedName");
 
         mockMvc.perform(patch(BASE_URL + "/{id}", saved.getId())
@@ -228,7 +232,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.surname").value("surname cannot be empty"));
+                .andExpect(jsonPath("$.invalid_fields.surname").value("surname cannot be empty"));
 
         User fromDb = userRepository.findById(saved.getId()).orElseThrow();
         assertThat(fromDb.getSurname()).isEqualTo("Mukha");

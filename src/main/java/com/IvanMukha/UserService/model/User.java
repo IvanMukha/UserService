@@ -32,6 +32,6 @@ public class User extends BaseEntity {
     private LocalDate birthDate;
     private String email;
     private Boolean active;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true,  fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
     List<PaymentCard> paymentCards;
 }

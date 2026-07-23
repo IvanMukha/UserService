@@ -93,7 +93,7 @@ public class UserServiceImplTest {
 
     @Test
     void getById_shouldReturnUser_whenUserExists() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdWithPaymentCards(1L)).thenReturn(Optional.of(user));
         when(userMapper.toDTO(user)).thenReturn(userDTO);
 
         UserDTO result = userService.getById(1L);
@@ -103,7 +103,7 @@ public class UserServiceImplTest {
 
     @Test
     void getById_shouldThrowException_whenNotFound() {
-        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+        when(userRepository.findByIdWithPaymentCards(999L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getById(999L))
                 .isInstanceOf(UserNotFoundException.class);

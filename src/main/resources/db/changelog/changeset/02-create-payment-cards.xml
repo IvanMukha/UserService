@@ -21,7 +21,7 @@
                          unique="true"
                          uniqueConstraintName="uq_number_payment_cards"/>
         </column>
-        <column name="holder" type="VARCHAR"/>
+        <column name="holder" type="VARCHAR(255)"/>
         <column name="expiration_date" type="DATE">
             <constraints nullable="false"/>
         </column>

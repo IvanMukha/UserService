@@ -119,7 +119,7 @@ public class PaymentCardControllerTest extends AbstractIntegrationTest {
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isConflict());
 
         assertThat(paymentCardRepository.findAll()).hasSize(5);
     }
@@ -134,10 +134,12 @@ public class PaymentCardControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.userId").value("user_id cannot be null"))
-                .andExpect(jsonPath("$.number").value("card number cannot be empty"))
-                .andExpect(jsonPath("$.expirationDate").value("expirationDate cannot be null"))
-                .andExpect(jsonPath("$.active").value("active status cannot be null"));
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.detail").value("One or more field not valid"))
+                .andExpect(jsonPath("$.invalid_fields.userId").value("user_id cannot be null"))
+                .andExpect(jsonPath("$.invalid_fields.number").value("card number cannot be empty"))
+                .andExpect(jsonPath("$.invalid_fields.expirationDate").value("expirationDate cannot be null"))
+                .andExpect(jsonPath("$.invalid_fields.active").value("active status cannot be null"));
 
         assertThat(paymentCardRepository.findAll()).isEmpty();
     }
@@ -151,7 +153,9 @@ public class PaymentCardControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.expirationDate").value("Card has expired"));
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.detail").value("One or more field not valid"))
+                .andExpect(jsonPath("$.invalid_fields.expirationDate").value("Card has expired"));
     }
 
     @Test
@@ -250,7 +254,7 @@ public class PaymentCardControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.expirationDate").value("Card has expired"));
+                .andExpect(jsonPath("$.invalid_fields.expirationDate").value("Card has expired"));
 
         PaymentCard fromDb = paymentCardRepository.findById(saved.getId()).orElseThrow();
         assertThat(fromDb.getExpirationDate()).isEqualTo(LocalDate.now().plusYears(2));
