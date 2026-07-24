@@ -3,7 +3,7 @@ package com.IvanMukha.UserService.controller.impl;
 import com.IvanMukha.UserService.DTO.UserDTO;
 import com.IvanMukha.UserService.controller.UserController;
 import com.IvanMukha.UserService.service.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultUserController implements UserController {
     private final UserService userService;
 

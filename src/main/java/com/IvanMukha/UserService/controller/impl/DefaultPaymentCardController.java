@@ -3,7 +3,7 @@ package com.IvanMukha.UserService.controller.impl;
 import com.IvanMukha.UserService.DTO.PaymentCardDTO;
 import com.IvanMukha.UserService.controller.PaymentCardController;
 import com.IvanMukha.UserService.service.PaymentCardService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultPaymentCardController implements PaymentCardController {
     private final PaymentCardService paymentCardService;
 

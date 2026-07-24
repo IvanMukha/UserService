@@ -8,7 +8,7 @@ import com.IvanMukha.UserService.model.User;
 import com.IvanMukha.UserService.repository.UserRepository;
 import com.IvanMukha.UserService.service.UserService;
 import com.IvanMukha.UserService.specification.UserSpecification;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;

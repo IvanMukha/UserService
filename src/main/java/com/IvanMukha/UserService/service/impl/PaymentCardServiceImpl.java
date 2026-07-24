@@ -12,10 +12,11 @@ import com.IvanMukha.UserService.repository.PaymentCardRepository;
 import com.IvanMukha.UserService.repository.UserRepository;
 import com.IvanMukha.UserService.service.PaymentCardService;
 import com.IvanMukha.UserService.specification.PaymentCardSpecification;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,15 +24,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PaymentCardServiceImpl implements PaymentCardService {
 
-    private PaymentCardRepository paymentCardRepository;
-    private PaymentCardMapper paymentCardMapper;
-    private UserRepository userRepository;
+    private final PaymentCardRepository paymentCardRepository;
+    private final PaymentCardMapper paymentCardMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", key = "#paymentCardDTO.userId")
     public PaymentCardDTO save(PaymentCardDTO paymentCardDTO) {
         long paymentCardCount = paymentCardRepository.countByUserId(paymentCardDTO.getUserId());
         if (paymentCardCount >= 5) {
@@ -64,7 +66,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
-    @CachePut(value = "cards", key = "#id")
+    @Caching(
+            put = @CachePut(value = "cards", key = "#id"),
+            evict = @CacheEvict(value = "users", key = "#paymentCardDTO.userId")
+    )
     public PaymentCardDTO updateById(Long id, PaymentCardDTO paymentCardDTO) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         PaymentCard updatedPaymentCard = paymentCardMapper.toModelUpdate(paymentCardDTO, foundPaymentCard);
