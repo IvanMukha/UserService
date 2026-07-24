@@ -119,7 +119,7 @@ jobs:
           scanMetadataReportFile: target/sonar/report-task.txt
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR.HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   docker-build:
     name: Artefact Creation (Docker Image)
     runs-on: ubuntu-latest
