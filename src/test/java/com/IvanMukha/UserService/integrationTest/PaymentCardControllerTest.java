@@ -266,7 +266,7 @@ public class PaymentCardControllerTest extends AbstractIntegrationTest {
 
         mockMvc.perform(patch(BASE_URL + "/{id}/status", saved.getId())
                         .param("isActive", "false"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         PaymentCard fromDb = paymentCardRepository.findById(saved.getId()).orElseThrow();
         assertThat(fromDb.getActive()).isFalse();

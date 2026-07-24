@@ -13,6 +13,6 @@ public interface PaymentCardService {
 
     PaymentCardDTO updateById(Long id, PaymentCardDTO paymentCardDTO);
 
-    void changePaymentCardStatus(Long id, Boolean isActive);
+    PaymentCardDTO changePaymentCardStatus(Long id, Boolean isActive);
 
 }

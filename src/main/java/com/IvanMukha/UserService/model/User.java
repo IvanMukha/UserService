@@ -13,25 +13,32 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
+@FieldNameConstants
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
     @SequenceGenerator(name = "user_seq_generator", sequenceName = "user_seq", allocationSize = 1)
     private Long id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "surname")
     private String surname;
-    @Column(name = "birth_date")
+    @Column(name = "birth_date",nullable = false)
     private LocalDate birthDate;
+    @Column(name = "email",nullable = false,unique = true)
     private String email;
+    @Column(name = "active",nullable = false)
     private Boolean active;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
-    List<PaymentCard> paymentCards;
+    Set<PaymentCard> paymentCards=new HashSet<>();
 }

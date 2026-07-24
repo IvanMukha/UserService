@@ -154,7 +154,10 @@ public class UserServiceImplTest {
         updatedDTO.setId(1L);
         updatedDTO.setName("Updated");
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdWithPaymentCards(1L)).thenReturn(Optional.of(user));
+        when(userMapper.toDTO(user)).thenReturn(userDTO);
+        when(userMapper.toModel(userDTO)).thenReturn(user);
+        when(userRepository.existsByEmail(updateRequest.getEmail())).thenReturn(false);
         when(userMapper.toModelUpdate(updateRequest, user)).thenReturn(updatedUser);
         when(userRepository.save(updatedUser)).thenReturn(updatedUser);
         when(userMapper.toDTO(updatedUser)).thenReturn(updatedDTO);
@@ -167,8 +170,6 @@ public class UserServiceImplTest {
 
     @Test
     void updateById_shouldThrowException_whenNotFound() {
-        when(userRepository.findById(999L)).thenReturn(Optional.empty());
-
         assertThatThrownBy(() -> userService.updateById(999L, userDTO))
                 .isInstanceOf(UserNotFoundException.class);
 
@@ -178,7 +179,10 @@ public class UserServiceImplTest {
 
     @Test
     void changeUserStatus_shouldUpdateStatus() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdWithPaymentCards(1L)).thenReturn(Optional.of(user));
+        when(userMapper.toDTO(user)).thenReturn(userDTO);
+        when(userMapper.toModel(userDTO)).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
 
         userService.changeUserStatus(1L, false);
 
@@ -189,8 +193,6 @@ public class UserServiceImplTest {
 
     @Test
     void changeUserStatus_shouldThrowException_whenNotFound() {
-        when(userRepository.findById(999L)).thenReturn(Optional.empty());
-
         assertThatThrownBy(() -> userService.changeUserStatus(999L, true))
                 .isInstanceOf(UserNotFoundException.class);
 

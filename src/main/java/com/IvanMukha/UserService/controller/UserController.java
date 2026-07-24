@@ -30,7 +30,7 @@ public interface UserController {
 
     @PatchMapping("/{id}")
     ResponseEntity<UserDTO> updateById(@PathVariable Long id,
-                                       @Valid @RequestBody UserDTO userDTO);
+                                        @RequestBody UserDTO userDTO);
 
     @PatchMapping("/{id}/status")
     ResponseEntity<Void> changeUserStatus(@PathVariable Long id,

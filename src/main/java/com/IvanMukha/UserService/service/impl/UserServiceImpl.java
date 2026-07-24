@@ -9,6 +9,7 @@ import com.IvanMukha.UserService.repository.UserRepository;
 import com.IvanMukha.UserService.service.UserService;
 import com.IvanMukha.UserService.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -27,21 +29,31 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO save(UserDTO userDTO) {
+        log.info("Attempting to save new user with email: {}", userDTO.getEmail());
         if (userRepository.existsByEmail(userDTO.getEmail())) {
+            log.warn("Failed to save user. Email already exists: {}", userDTO.getEmail());
             throw new EmailAlreadyExistsException(userDTO.getEmail());
         }
-        return userMapper.toDTO(userRepository.save(userMapper.toModel(userDTO)));
+        User savedUser = userRepository.save(userMapper.toModel(userDTO));
+        log.info("Successfully saved user with id: {}", savedUser.getId());
+        return userMapper.toDTO(savedUser);
     }
 
     @Override
-    @Cacheable(value = "users", key = "#id")
+    @Cacheable(value = "users_with_card", key = "#id")
     public UserDTO getById(Long id) {
-        User foundUser = userRepository.findByIdWithPaymentCards(id).orElseThrow(() -> new UserNotFoundException(id));
+        log.debug("Fetching user by id: {}", id);
+        User foundUser = userRepository.findByIdWithPaymentCards(id)
+                .orElseThrow(() -> {
+                    log.warn("User with id: {} not found", id);
+                    return new UserNotFoundException(id);
+                });
         return userMapper.toDTO(foundUser);
     }
 
     @Override
     public Page<UserDTO> getAll(String name, String surname, Pageable pageable) {
+        log.debug("Fetching pageable users. Filters - name: {}, surname: {}", name, surname);
         Specification<User> spec = Specification.where(UserSpecification.hasName(name))
                 .and(UserSpecification.hasSurname(surname));
         Page<User> foundUsers = userRepository.findAll(spec, pageable);
@@ -50,25 +62,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @CachePut(value = "users",key = "#id")
+    @CachePut(value = "users_with_card", key = "#id")
     public UserDTO updateById(Long id, UserDTO userDTO) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        if(userDTO.getEmail()!=null){
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new EmailAlreadyExistsException(userDTO.getEmail());
-        }
+        log.info("Updating user with id: {}", id);
+        User foundUser = userMapper.toModel(getById(id));
+        if (userDTO.getEmail() != null) {
+            if (userRepository.existsByEmail(userDTO.getEmail())) {
+                log.warn("Failed to update user id: {}. Email already exists: {}", id, userDTO.getEmail());
+                throw new EmailAlreadyExistsException(userDTO.getEmail());
+            }
         }
         User updatedUser = userMapper.toModelUpdate(userDTO, foundUser);
-        return userMapper.toDTO(userRepository.save(updatedUser));
+        UserDTO result = userMapper.toDTO(userRepository.save(updatedUser));
+        log.info("Successfully updated user with id: {}", id);
+        return result;
 
     }
 
     @Override
     @Transactional
-    @CacheEvict(value = "users",key = "#id")
-    public void changeUserStatus(Long id, Boolean isActive) {
-        User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    @CacheEvict(value = "users_with_card", key = "#id")
+    public UserDTO changeUserStatus(Long id, Boolean isActive) {
+        log.info("Changing status of user id: {} to active={}", id, isActive);
+        User foundUser = userMapper.toModel(getById(id));
         foundUser.setActive(isActive);
-        userRepository.save(foundUser);
+        UserDTO result = userMapper.toDTO(userRepository.save(foundUser));
+        log.info("Status of user id: {} changed to active={}", id, isActive);
+        return result;
     }
 }

@@ -38,8 +38,7 @@ public class DefaultPaymentCardController implements PaymentCardController {
     }
 
     @Override
-    public ResponseEntity<Void> changePaymentCardStatus(Long id, Boolean isActive) {
-        paymentCardService.changePaymentCardStatus(id, isActive);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<PaymentCardDTO> changePaymentCardStatus(Long id, Boolean isActive) {
+        return ResponseEntity.status(HttpStatus.OK).body(paymentCardService.changePaymentCardStatus(id, isActive));
     }
 }

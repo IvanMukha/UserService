@@ -13,6 +13,6 @@ public interface UserService {
 
     UserDTO updateById(Long id, UserDTO userDTO);
 
-    void changeUserStatus(Long id, Boolean isActive);
+    UserDTO changeUserStatus(Long id, Boolean isActive);
 
 }

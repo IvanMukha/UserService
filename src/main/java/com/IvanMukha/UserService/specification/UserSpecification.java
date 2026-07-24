@@ -9,7 +9,7 @@ public class UserSpecification {
             if (name == null || name.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.strip().toLowerCase() + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get(User.Fields.name)), "%" + name.strip().toLowerCase() + "%");
         };
     }
 
@@ -18,7 +18,7 @@ public class UserSpecification {
             if (surname == null || surname.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("surname")), "%" + surname.strip().toLowerCase() + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get(User.Fields.surname)), "%" + surname.strip().toLowerCase() + "%");
         };
     }
 }

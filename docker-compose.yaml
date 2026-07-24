@@ -18,6 +18,10 @@ services:
       retries: 10
     networks:
       - userservice-network
+    deploy:
+      resources:
+        limits:
+          memory: ${POSTGRES_MEM_LIMIT}
 
   redis:
     image: redis:7-alpine
@@ -31,6 +35,10 @@ services:
       retries: 10
     networks:
       - userservice-network
+    deploy:
+      resources:
+        limits:
+          memory: ${REDIS_MEM_LIMIT}
 
   app:
     build:
@@ -55,6 +63,10 @@ services:
         condition: service_healthy
     networks:
       - userservice-network
+    deploy:
+      resources:
+        limits:
+          memory: ${APP_MEM_LIMIT}
 
 networks:
   userservice-network:

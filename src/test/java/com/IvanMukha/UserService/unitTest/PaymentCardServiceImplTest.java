@@ -1,14 +1,16 @@
 package com.IvanMukha.UserService.unitTest;
 
 import com.IvanMukha.UserService.DTO.PaymentCardDTO;
+import com.IvanMukha.UserService.DTO.UserDTO;
 import com.IvanMukha.UserService.exception.CardAlreadyExistsException;
 import com.IvanMukha.UserService.exception.CardLimitExceededException;
 import com.IvanMukha.UserService.exception.PaymentCardNotFoundException;
 import com.IvanMukha.UserService.mapper.PaymentCardMapper;
+import com.IvanMukha.UserService.mapper.UserMapper;
 import com.IvanMukha.UserService.model.PaymentCard;
 import com.IvanMukha.UserService.model.User;
 import com.IvanMukha.UserService.repository.PaymentCardRepository;
-import com.IvanMukha.UserService.repository.UserRepository;
+import com.IvanMukha.UserService.service.UserService;
 import com.IvanMukha.UserService.service.impl.PaymentCardServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,18 +46,25 @@ class PaymentCardServiceImplTest {
     @Mock
     private PaymentCardMapper paymentCardMapper;
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
+    @Mock
+    private UserMapper userMapper;
     @InjectMocks
     private PaymentCardServiceImpl paymentCardService;
 
     private PaymentCard paymentCard;
     private PaymentCardDTO paymentCardDTO;
     private User user;
+    private UserDTO userDTO;
+
 
     @BeforeEach
     void setUp() {
         user = new User();
         user.setId(1L);
+        userDTO=new UserDTO();
+        userDTO.setId(1L);
+
 
         paymentCard = new PaymentCard();
         paymentCard.setId(1L);
@@ -78,7 +87,7 @@ class PaymentCardServiceImplTest {
     void save_shouldReturnPaymentCardDTO_whenCardLimitNotReachedAndCardNumberNotExists() {
         when(paymentCardRepository.countByUserId(paymentCardDTO.getUserId())).thenReturn(0L);
         when(paymentCardRepository.existsByNumber(paymentCardDTO.getNumber())).thenReturn(false);
-        when(userRepository.findById(paymentCardDTO.getUserId())).thenReturn(Optional.of(user));
+        when(userService.getById(paymentCardDTO.getUserId())).thenReturn(userDTO);
         when(paymentCardMapper.toModel(paymentCardDTO)).thenReturn(paymentCard);
         when(paymentCardRepository.save(paymentCard)).thenReturn(paymentCard);
         when(paymentCardMapper.toDTO(paymentCard)).thenReturn(paymentCardDTO);
@@ -88,7 +97,7 @@ class PaymentCardServiceImplTest {
         assertThat(result).isEqualTo(paymentCardDTO);
         verify(paymentCardRepository).countByUserId(paymentCardDTO.getUserId());
         verify(paymentCardRepository).existsByNumber(paymentCardDTO.getNumber());
-        verify(userRepository).findById(paymentCardDTO.getUserId());
+        verify(userService).getById(paymentCardDTO.getUserId());
         verify(paymentCardRepository).save(paymentCard);
     }
 
@@ -178,6 +187,8 @@ class PaymentCardServiceImplTest {
         updatedPaymentCardDTO.setNumber("546586594569999");
 
         when(paymentCardRepository.findById(1L)).thenReturn(Optional.of(paymentCard));
+        when(paymentCardMapper.toDTO(paymentCard)).thenReturn(paymentCardDTO);
+        when(paymentCardMapper.toModel(paymentCardDTO)).thenReturn(paymentCard);
         when(paymentCardMapper.toModelUpdate(updateRequestDTO, paymentCard)).thenReturn(updatedPaymentCard);
         when(paymentCardRepository.save(updatedPaymentCard)).thenReturn(updatedPaymentCard);
         when(paymentCardMapper.toDTO(updatedPaymentCard)).thenReturn(updatedPaymentCardDTO);
@@ -190,8 +201,6 @@ class PaymentCardServiceImplTest {
 
     @Test
     void updateById_shouldThrowException_whenNotFound() {
-        when(paymentCardRepository.findById(999L)).thenReturn(Optional.empty());
-
         assertThatThrownBy(() -> paymentCardService.updateById(999L, paymentCardDTO))
                 .isInstanceOf(PaymentCardNotFoundException.class);
 
@@ -202,9 +211,11 @@ class PaymentCardServiceImplTest {
     @Test
     void changePaymentCardStatus_shouldUpdateStatus() {
         when(paymentCardRepository.findById(1L)).thenReturn(Optional.of(paymentCard));
+        when(paymentCardMapper.toDTO(paymentCard)).thenReturn(paymentCardDTO);
+        when(paymentCardMapper.toModel(paymentCardDTO)).thenReturn(paymentCard);
+        when(paymentCardRepository.save(paymentCard)).thenReturn(paymentCard);
 
         paymentCardService.changePaymentCardStatus(1L, false);
-
         ArgumentCaptor<PaymentCard> captor = ArgumentCaptor.forClass(PaymentCard.class);
         verify(paymentCardRepository).save(captor.capture());
         assertThat(captor.getValue().getActive()).isFalse();
@@ -212,8 +223,6 @@ class PaymentCardServiceImplTest {
 
     @Test
     void changePaymentCardStatus_shouldThrowException_whenNotFound() {
-        when(paymentCardRepository.findById(999L)).thenReturn(Optional.empty());
-
         assertThatThrownBy(() -> paymentCardService.changePaymentCardStatus(999L, true))
                 .isInstanceOf(PaymentCardNotFoundException.class);
 

@@ -10,7 +10,7 @@ public class PaymentCardSpecification {
             if (holder == null || holder.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(criteriaBuilder.lower(root.get("holder")), "%" + holder.strip().toLowerCase() + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get(PaymentCard.Fields.holder)), "%" + holder.strip().toLowerCase() + "%");
         };
 
     }
@@ -20,7 +20,7 @@ public class PaymentCardSpecification {
             if (userId == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.equal(root.get("user").get("id"), userId);
+            return criteriaBuilder.equal(root.get(PaymentCard.Fields.user).get(User.Fields.id), userId);
         };
     }
 }

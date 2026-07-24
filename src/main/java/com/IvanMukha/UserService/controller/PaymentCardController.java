@@ -33,6 +33,6 @@ public interface PaymentCardController {
                                               @Valid @RequestBody PaymentCardDTO paymentCardDTO);
 
     @PatchMapping("/{id}/status")
-    ResponseEntity<Void> changePaymentCardStatus(@PathVariable Long id,
+    ResponseEntity<PaymentCardDTO> changePaymentCardStatus(@PathVariable Long id,
                                                  @RequestParam Boolean isActive);
 }

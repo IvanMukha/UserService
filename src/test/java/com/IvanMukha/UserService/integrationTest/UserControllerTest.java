@@ -221,24 +221,6 @@ public class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void updateById_shouldReturn400_whenValidationFails() throws Exception {
-        User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
-
-        UserDTO update = buildUserDTO("myEmail@gmail.com");
-        update.setSurname("");
-
-
-        mockMvc.perform(patch(BASE_URL + "/{id}", saved.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(update)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.invalid_fields.surname").value("surname cannot be empty"));
-
-        User fromDb = userRepository.findById(saved.getId()).orElseThrow();
-        assertThat(fromDb.getSurname()).isEqualTo("Mukha");
-    }
-
-    @Test
     void changeUserStatus_shouldUpdateStatusInDb() throws Exception {
         User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
 
