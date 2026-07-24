@@ -32,6 +32,8 @@
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <org.lombok.version>1.18.46</org.lombok.version>
         <org.jococo.version>0.8.14</org.jococo.version>
+        <org.testcontainers.version>1.21.4</org.testcontainers.version>
+        <org.maven-plugins.version>3.8.1</org.maven-plugins.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -101,7 +103,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.21.4</version>
+            <version>${org.testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -112,7 +114,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.21.4</version>
+            <version>${org.testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 	</dependencies>
@@ -126,7 +128,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${org.maven-plugins.version}</version>
                 <configuration>
                     <source>25</source>
                     <target>25</target>

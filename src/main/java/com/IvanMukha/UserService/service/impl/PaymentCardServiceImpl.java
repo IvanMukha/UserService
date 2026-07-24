@@ -68,8 +68,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Transactional
     @Caching(
             put = @CachePut(value = "cards", key = "#id"),
-            evict = @CacheEvict(value = "users", key = "#paymentCardDTO.userId")
-    )
+            evict = @CacheEvict(value = "users", key = "#paymentCardDTO.userId"))
     public PaymentCardDTO updateById(Long id, PaymentCardDTO paymentCardDTO) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         PaymentCard updatedPaymentCard = paymentCardMapper.toModelUpdate(paymentCardDTO, foundPaymentCard);
@@ -78,7 +77,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "cards", key = "#id")
+    @Caching(
+            put = @CachePut(value = "cards", key = "#id"),
+            evict = @CacheEvict(value = "users", key = "#paymentCardDTO.userId"))
     public void changePaymentCardStatus(Long id, Boolean isActive) {
         PaymentCard foundPaymentCard = paymentCardRepository.findById(id).orElseThrow(() -> new PaymentCardNotFoundException(id));
         foundPaymentCard.setActive(isActive);

@@ -53,8 +53,10 @@ public class UserServiceImpl implements UserService {
     @CachePut(value = "users",key = "#id")
     public UserDTO updateById(Long id, UserDTO userDTO) {
         User foundUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        if(userDTO.getEmail()!=null){
         if (userRepository.existsByEmail(userDTO.getEmail())) {
             throw new EmailAlreadyExistsException(userDTO.getEmail());
+        }
         }
         User updatedUser = userMapper.toModelUpdate(userDTO, foundUser);
         return userMapper.toDTO(userRepository.save(updatedUser));
