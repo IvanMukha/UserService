@@ -1,6 +1,6 @@
 package com.mukha.userservice.integrationTest;
 
-import com.mukha.userservice.DTO.UserDTO;
+import com.mukha.userservice.dto.UserDTO;
 import com.mukha.userservice.model.User;
 import com.mukha.userservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

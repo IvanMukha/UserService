@@ -1,6 +1,6 @@
 package com.mukha.userservice.service.impl;
 
-import com.mukha.userservice.DTO.UserDTO;
+import com.mukha.userservice.dto.UserDTO;
 import com.mukha.userservice.exception.EmailAlreadyExistsException;
 import com.mukha.userservice.exception.UserNotFoundException;
 import com.mukha.userservice.mapper.UserMapper;

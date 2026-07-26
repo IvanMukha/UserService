@@ -1,6 +1,6 @@
 package com.mukha.userservice.service;
 
-import com.mukha.userservice.DTO.PaymentCardDTO;
+import com.mukha.userservice.dto.PaymentCardDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

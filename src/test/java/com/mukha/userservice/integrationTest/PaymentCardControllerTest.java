@@ -1,6 +1,6 @@
 package com.mukha.userservice.integrationTest;
 
-import com.mukha.userservice.DTO.PaymentCardDTO;
+import com.mukha.userservice.dto.PaymentCardDTO;
 import com.mukha.userservice.model.PaymentCard;
 import com.mukha.userservice.model.User;
 import com.mukha.userservice.repository.PaymentCardRepository;

@@ -1,6 +1,6 @@
 package com.mukha.userservice.controller.impl;
 
-import com.mukha.userservice.DTO.UserDTO;
+import com.mukha.userservice.dto.UserDTO;
 import com.mukha.userservice.controller.UserController;
 import com.mukha.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;

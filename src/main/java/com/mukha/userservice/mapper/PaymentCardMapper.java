@@ -1,6 +1,6 @@
 package com.mukha.userservice.mapper;
 
-import com.mukha.userservice.DTO.PaymentCardDTO;
+import com.mukha.userservice.dto.PaymentCardDTO;
 import com.mukha.userservice.model.PaymentCard;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

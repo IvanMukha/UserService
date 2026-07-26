@@ -1,6 +1,6 @@
 package com.mukha.userservice.mapper;
 
-import com.mukha.userservice.DTO.UserDTO;
+import com.mukha.userservice.dto.UserDTO;
 import com.mukha.userservice.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

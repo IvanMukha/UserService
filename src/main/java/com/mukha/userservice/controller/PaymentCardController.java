@@ -1,6 +1,6 @@
 package com.mukha.userservice.controller;
 
-import com.mukha.userservice.DTO.PaymentCardDTO;
+import com.mukha.userservice.dto.PaymentCardDTO;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

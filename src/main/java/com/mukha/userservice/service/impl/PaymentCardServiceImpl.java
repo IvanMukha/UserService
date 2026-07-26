@@ -1,6 +1,6 @@
 package com.mukha.userservice.service.impl;
 
-import com.mukha.userservice.DTO.PaymentCardDTO;
+import com.mukha.userservice.dto.PaymentCardDTO;
 import com.mukha.userservice.exception.CardAlreadyExistsException;
 import com.mukha.userservice.exception.CardLimitExceededException;
 import com.mukha.userservice.exception.PaymentCardNotFoundException;

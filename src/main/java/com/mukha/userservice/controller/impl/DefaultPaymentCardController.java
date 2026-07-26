@@ -1,6 +1,6 @@
 package com.mukha.userservice.controller.impl;
 
-import com.mukha.userservice.DTO.PaymentCardDTO;
+import com.mukha.userservice.dto.PaymentCardDTO;
 import com.mukha.userservice.controller.PaymentCardController;
 import com.mukha.userservice.service.PaymentCardService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.mukha.userservice.DTO;
+package com.mukha.userservice.dto;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;

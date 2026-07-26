@@ -1,6 +1,5 @@
-package com.mukha.userservice.DTO;
+package com.mukha.userservice.dto;
 
-import com.mukha.userservice.model.PaymentCard;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
