@@ -61,6 +61,7 @@ class PaymentCardServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        paymentCardService.setSelf(paymentCardService);
         user = new User();
         user.setId(1L);
         userDTO=new UserDTO();

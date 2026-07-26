@@ -48,6 +48,7 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        userService.setSelf(userService);
         user = new User();
         user.setId(1L);
         user.setName("Ivan");
