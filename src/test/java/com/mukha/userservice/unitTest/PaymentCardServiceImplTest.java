@@ -10,6 +10,7 @@ import com.mukha.userservice.mapper.UserMapper;
 import com.mukha.userservice.model.PaymentCard;
 import com.mukha.userservice.model.User;
 import com.mukha.userservice.repository.PaymentCardRepository;
+import com.mukha.userservice.security.UserSecurity;
 import com.mukha.userservice.service.UserService;
 import com.mukha.userservice.service.impl.PaymentCardServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +44,6 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentCardServiceImplTest {
-
     @Mock
     private PaymentCardRepository paymentCardRepository;
     @Mock

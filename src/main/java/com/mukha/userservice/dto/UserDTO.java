@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -28,4 +29,6 @@ public class UserDTO implements Serializable {
     @NotNull(message = "active status cannot be null")
     private Boolean active;
     private List<PaymentCardDTO> paymentCardsDTO;
+    @NotNull(message = "keycloakUUID cannot be null")
+    private UUID keycloakUUID;
 }

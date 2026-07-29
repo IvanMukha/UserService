@@ -15,4 +15,6 @@ public interface PaymentCardService {
 
     PaymentCardDTO changePaymentCardStatus(Long id, Boolean isActive);
 
+    String getKeycloakUuidByCardId(Long id);
+
 }

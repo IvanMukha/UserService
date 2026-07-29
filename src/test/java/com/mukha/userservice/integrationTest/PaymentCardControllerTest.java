@@ -9,11 +9,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -22,7 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 class PaymentCardControllerTest extends AbstractIntegrationTest {
     private static final String BASE_URL = "/api/cards";
@@ -51,6 +53,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
 
     private User userEntity(String email) {
         User u = new User();
+        u.setKeycloakUUID(UUID.randomUUID());
         u.setEmail(email);
         u.setName("Ivan");
         u.setSurname("Mukha");
@@ -80,6 +83,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createCard_shouldSaveAndReturnCard() throws Exception {
         PaymentCardDTO request = buildCardDTO(user.getId(), "1234567891234567");
 
@@ -96,6 +100,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createCard_shouldReturn409_whenCardNumberAlreadyExists() throws Exception {
         paymentCardRepository.save(cardEntity(user, "1234567891234567"));
 
@@ -110,6 +115,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createCard_shouldReturn403_whenCardLimitExceeded() throws Exception {
         for (int i = 0; i < 5; i++) {
             paymentCardRepository.save(cardEntity(user, "123456789123456" + i));
@@ -126,6 +132,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createCard_shouldReturn400_withFieldErrors_whenValidationFails() throws Exception {
         PaymentCardDTO request = buildCardDTO(null, "");
         request.setExpirationDate(null);
@@ -146,6 +153,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createCard_shouldReturn400_whenExpirationDateInPast() throws Exception {
         PaymentCardDTO request = buildCardDTO(user.getId(), "1234567891234567");
         request.setExpirationDate(LocalDate.now().minusDays(1));
@@ -160,6 +168,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getById_shouldReturnCard_whenExists() throws Exception {
         PaymentCard saved = paymentCardRepository.save(cardEntity(user, "1234567891234567"));
 
@@ -170,12 +179,14 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getById_shouldReturn404_whenNotExists() throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", 9999L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAll_shouldReturnCardsFilteredByUserId() throws Exception {
         User anotherUser = userRepository.save(userEntity("myEmail1@gmail.com"));
 
@@ -193,6 +204,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAll_shouldReturnCardsFilteredByHolder() throws Exception {
         PaymentCard card1 = cardEntity(user, "1234567891234567");
         card1.setHolder("IVAN MUKHA");
@@ -208,6 +220,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAll_shouldReturnAllCards_whenNoFilterProvided() throws Exception {
         paymentCardRepository.save(cardEntity(user, "1234567891234567"));
         paymentCardRepository.save(cardEntity(user, "1234567891234568"));
@@ -218,6 +231,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void updateById_shouldUpdateCardInDb() throws Exception {
         PaymentCard saved = paymentCardRepository.save(cardEntity(user, "1234567891234567"));
 
@@ -235,6 +249,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void updateById_shouldReturn404_whenNotExists() throws Exception {
         PaymentCardDTO update = buildCardDTO(user.getId(), "1234567891234567");
 
@@ -245,6 +260,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void updateById_shouldReturn400_whenValidationFails() throws Exception {
         PaymentCard saved = paymentCardRepository.save(cardEntity(user, "1234567891234567"));
 
@@ -262,6 +278,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void changePaymentCardStatus_shouldUpdateStatusInDb() throws Exception {
         PaymentCard saved = paymentCardRepository.save(cardEntity(user, "1234567891234567"));
 
@@ -274,6 +291,7 @@ class PaymentCardControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void changePaymentCardStatus_shouldReturn404_whenNotExists() throws Exception {
         mockMvc.perform(patch(BASE_URL + "/{id}/status", 9999L)
                         .param("isActive", "true"))

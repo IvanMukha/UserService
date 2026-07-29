@@ -103,4 +103,11 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         return paymentCardMapper.toDTO(paymentCardRepository.save(foundPaymentCard));
 
     }
+    public String getKeycloakUuidByCardId(Long id) {
+        return paymentCardRepository.findKeycloakUuidByCardId(id)
+                .orElseThrow(() -> {
+                    log.warn("Payment card with id: {} not found", id);
+                    return new PaymentCardNotFoundException(id);
+                });
+    }
 }
