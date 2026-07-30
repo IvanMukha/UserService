@@ -254,7 +254,7 @@ class PaymentCardServiceImplTest {
         when(paymentCardRepository.findKeycloakUuidByCardId(cardId))
                 .thenReturn(Optional.empty());
 
-        PaymentCardNotFoundException exception = assertThrows(
+        assertThrows(
                 PaymentCardNotFoundException.class,
                 () -> paymentCardService.getKeycloakUuidByCardId(cardId)
         );
