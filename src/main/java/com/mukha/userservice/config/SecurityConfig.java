@@ -25,15 +25,15 @@ import java.util.stream.Stream;
     public class SecurityConfig {
         private final SecurityExceptionForwarder securityExceptionForwarder;
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) {
 
             http
                     .csrf(AbstractHttpConfigurer::disable)
-                    .authorizeHttpRequests((authorize) -> authorize
+                    .authorizeHttpRequests(authorize -> authorize
                             .requestMatchers("/error").permitAll()
                             .anyRequest().authenticated()
                     )
-                    .oauth2ResourceServer((oauth2) -> oauth2
+                    .oauth2ResourceServer(oauth2 -> oauth2
                             .authenticationEntryPoint(securityExceptionForwarder)
                             .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
 
@@ -54,7 +54,7 @@ import java.util.stream.Stream;
                 List<String> roles = (List<String>) realmAccess.getOrDefault("roles", List.of());
                 return Stream.concat(authorities.stream(),
                                 roles.stream()
-                                        .map(role -> new SimpleGrantedAuthority(role))
+                                        .map(SimpleGrantedAuthority::new)
                                         .map(GrantedAuthority.class::cast))
                         .toList();
             });
