@@ -64,13 +64,8 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ProblemDetail handleEmailAlreadyExistsException(EmailAlreadyExistsException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
-    }
-
-    @ExceptionHandler(CardAlreadyExistsException.class)
-    public ProblemDetail handleCardAlreadyExistsException(CardAlreadyExistsException e) {
+    @ExceptionHandler({EmailAlreadyExistsException.class, CardAlreadyExistsException.class})
+    public ProblemDetail handleAlreadyExistsExceptions(RuntimeException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
     }
 

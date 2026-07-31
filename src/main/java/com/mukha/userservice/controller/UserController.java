@@ -28,7 +28,6 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
         UserDTO savedUser = userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
