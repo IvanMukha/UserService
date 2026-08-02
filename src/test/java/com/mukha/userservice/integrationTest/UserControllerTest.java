@@ -7,11 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -24,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest extends AbstractIntegrationTest {
 
     private static final String BASE_URL = "/api/users";
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -41,6 +42,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     private UserDTO buildUserDTO(String email) {
         UserDTO dto = new UserDTO();
+        dto.setKeycloakUUID(UUID.randomUUID());
         dto.setName("Ivan");
         dto.setSurname("Mukha");
         dto.setBirthDate(LocalDate.of(2000, Month.APRIL, 20));
@@ -51,6 +53,7 @@ class UserControllerTest extends AbstractIntegrationTest {
 
     private User userEntity(String email, String name, String surname) {
         User u = new User();
+        u.setKeycloakUUID(UUID.randomUUID());
         u.setEmail(email);
         u.setName(name);
         u.setSurname(surname);
@@ -60,6 +63,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createUser_shouldSaveAndReturnUser() throws Exception {
         UserDTO request = buildUserDTO("myEmail@gmail.com");
 
@@ -76,6 +80,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createUser_shouldReturn409_whenEmailAlreadyExists() throws Exception {
         userRepository.save(userEntity("duplicate@gmail.com", "Ivan", "Mukha"));
 
@@ -90,6 +95,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createUser_shouldReturn400_withFieldErrors_whenValidationFails() throws Exception {
         UserDTO request = buildUserDTO("notEmail");
         request.setName("");
@@ -111,6 +117,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void createUser_shouldReturn400_whenBirthDateInFuture() throws Exception {
         UserDTO request = buildUserDTO("myEmail@gmail.com");
         request.setBirthDate(LocalDate.now().plusDays(1));
@@ -125,6 +132,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getById_shouldReturnUser_whenExists() throws Exception {
         User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
 
@@ -137,12 +145,14 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getById_shouldReturn404_whenNotExists() throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", 999L))
                 .andExpect(status().isNotFound());
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAll_shouldFilterByName() throws Exception {
         userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
         userRepository.save(userEntity("myEmail2@gmail.com", "Ivan", "Smith"));
@@ -162,6 +172,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAll_shouldFilterBySurnameAndPaged() throws Exception {
         userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
         userRepository.save(userEntity("myEmail2@gmail.com", "Ivan", "Smith"));
@@ -179,6 +190,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAll_shouldReturnAllUsers_whenNoFilterProvidedAndPaged() throws Exception {
         userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
         userRepository.save(userEntity("myEmail2@gmail.com", "John", "Doe"));
@@ -194,6 +206,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void updateById_shouldUpdateUserInDb() throws Exception {
         User saved = userRepository.save(userEntity("myEmail@1gmail.com", "Ivan", "Mukha"));
 
@@ -211,6 +224,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void updateById_shouldReturn404_whenNotExists() throws Exception {
         UserDTO update = buildUserDTO("myEmail5@gmail.com");
 
@@ -221,6 +235,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void changeUserStatus_shouldUpdateStatusInDb() throws Exception {
         User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
 
@@ -233,9 +248,29 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void changeUserStatus_shouldReturn404_whenNotExists() throws Exception {
         mockMvc.perform(patch(BASE_URL + "/{id}/status", 9999L)
                         .param("isActive", "true"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAll_shouldReturn401_whenNoToken() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.title").value("Unauthorized"))
+                .andExpect(jsonPath("$.instance").value("/api/users"));
+    }
+    @Test
+    @WithMockUser(authorities = "user")
+    void getAll_shouldReturn403_whenUserIsNotAdmin() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.title").value("Forbidden"));
     }
 }

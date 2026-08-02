@@ -16,6 +16,7 @@ import lombok.experimental.FieldNameConstants;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -38,5 +39,7 @@ public class User extends BaseEntity {
     @Column(name = "active",nullable = false)
     private Boolean active;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,  orphanRemoval = true)
-    Set<PaymentCard> paymentCards=new HashSet<>();
+    private Set<PaymentCard> paymentCards=new HashSet<>();
+    @Column(name = "keycloak_uuid",nullable = false, unique = true)
+    private UUID keycloakUUID;
 }

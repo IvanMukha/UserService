@@ -26,9 +26,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -41,7 +44,6 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentCardServiceImplTest {
-
     @Mock
     private PaymentCardRepository paymentCardRepository;
     @Mock
@@ -64,7 +66,7 @@ class PaymentCardServiceImplTest {
         paymentCardService.setSelf(paymentCardService);
         user = new User();
         user.setId(1L);
-        userDTO=new UserDTO();
+        userDTO = new UserDTO();
         userDTO.setId(1L);
 
 
@@ -229,5 +231,34 @@ class PaymentCardServiceImplTest {
                 .isInstanceOf(PaymentCardNotFoundException.class);
 
         verify(paymentCardRepository, never()).save(any());
+    }
+
+    @Test
+    void getKeycloakUuidByCardId_ShouldReturnUuid_WhenCardExists() {
+        Long cardId = 1L;
+        String expectedUuid = "expectedUUID";
+
+        when(paymentCardRepository.findKeycloakUuidByCardId(cardId))
+                .thenReturn(Optional.of(expectedUuid));
+
+        String actualUuid = paymentCardService.getKeycloakUuidByCardId(cardId);
+
+        assertEquals(expectedUuid, actualUuid);
+        verify(paymentCardRepository, times(1)).findKeycloakUuidByCardId(cardId);
+    }
+
+    @Test
+    void getKeycloakUuidByCardId_ShouldThrowException_WhenCardDoesNotExist() {
+        Long cardId = 999L;
+
+        when(paymentCardRepository.findKeycloakUuidByCardId(cardId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                PaymentCardNotFoundException.class,
+                () -> paymentCardService.getKeycloakUuidByCardId(cardId)
+        );
+
+        verify(paymentCardRepository, times(1)).findKeycloakUuidByCardId(cardId);
     }
 }
