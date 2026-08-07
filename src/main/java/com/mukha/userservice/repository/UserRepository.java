@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.paymentCards WHERE u.id= :id")
     Optional<User> findByIdWithPaymentCards(@Param("id")Long id);
+
+    Optional<User> findByEmail(String email);
 }

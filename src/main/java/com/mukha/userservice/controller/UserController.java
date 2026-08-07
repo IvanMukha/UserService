@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Validated
 @RequiredArgsConstructor
@@ -47,11 +49,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll(name, surname, pageable));
     }
 
+    @GetMapping("/by-email")
+    public ResponseEntity<UserDTO> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getByEmail(email));
+    }
+
     @PatchMapping("/{id}")
     @PreAuthorize("@userSecurity.isOwner(#id) or hasAuthority('admin')")
     public ResponseEntity<UserDTO> updateById(@PathVariable Long id,
                                               @RequestBody UserDTO userDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateById(id, userDTO));
+    }
+    @GetMapping("/batch")
+    public ResponseEntity<List<UserDTO>> getUsersByIds(@RequestParam("ids") List<Long> userIds){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAllById(userIds));
     }
 
     @PatchMapping("/{id}/status")

@@ -6,4 +6,7 @@ public class UserNotFoundException extends ResourceNotFoundException {
     public UserNotFoundException(Long id) {
         super(id, User.class);
     }
+    public UserNotFoundException(String email){
+        super(email,User.class);
+    }
 }

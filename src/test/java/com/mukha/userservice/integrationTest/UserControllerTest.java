@@ -152,6 +152,57 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void getByEmail_shouldReturnUser_whenExists() throws Exception {
+        User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
+
+        mockMvc.perform(get(BASE_URL + "/by-email")
+                        .param("email", "myEmail@gmail.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(saved.getId()))
+                .andExpect(jsonPath("$.email").value("myEmail@gmail.com"))
+                .andExpect(jsonPath("$.name").value("Ivan"))
+                .andExpect(jsonPath("$.surname").value("Mukha"));
+    }
+
+    @Test
+    void getByEmail_shouldReturn404_whenNotExists() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/by-email")
+                        .param("email", "notExistEmail@gmail.com"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAllByUserId_shouldReturnAllUsers_whenUserExists() throws Exception {
+        User user1 = userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
+        User user2 = userRepository.save(userEntity("myEmail2@gmail.com", "John", "Doe"));
+        User user3 = userRepository.save(userEntity("myEmail3@gmail.com", "Alan", "Smith"));
+        User user4 = userRepository.save(userEntity("myEmail4@gmail.com", "Ivan", "NeMukha"));
+
+        String idsParam = user1.getId() + "," + user2.getId() + "," + user3.getId();
+
+        mockMvc.perform(get(BASE_URL + "/batch")
+                        .param("ids", idsParam))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].name").value("Ivan"))
+                .andExpect(jsonPath("$[1].name").value("John"))
+                .andExpect(jsonPath("$[2].name").value("Alan"));
+    }
+
+    @Test
+    void getAllByUserId_shouldReturnEmptyList_whenUserNotExists() throws Exception {
+        userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
+        userRepository.save(userEntity("myEmail2@gmail.com", "John", "Doe"));
+        userRepository.save(userEntity("myEmail3@gmail.com", "Alan", "Smith"));
+        userRepository.save(userEntity("myEmail4@gmail.com", "Ivan", "NeMukha"));
+
+        mockMvc.perform(get(BASE_URL + "/batch")
+                        .param("ids", "997,998,999"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
     @WithMockUser(authorities = "admin")
     void getAll_shouldFilterByName() throws Exception {
         userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
@@ -159,11 +210,10 @@ class UserControllerTest extends AbstractIntegrationTest {
         userRepository.save(userEntity("myEmail3@gmail.com", "John", "Mukha"));
         userRepository.save(userEntity("myEmail4@gmail.com", "John", "Doe"));
 
-
         mockMvc.perform(get(BASE_URL)
                         .param("name", "Ivan")
-                        .param("page","0")
-                        .param("size","10"))
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.totalElements").value(2));
@@ -264,6 +314,7 @@ class UserControllerTest extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.title").value("Unauthorized"))
                 .andExpect(jsonPath("$.instance").value("/api/users"));
     }
+
     @Test
     @WithMockUser(authorities = "user")
     void getAll_shouldReturn403_whenUserIsNotAdmin() throws Exception {
