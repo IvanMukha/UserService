@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,8 +142,7 @@ class UserServiceImplTest {
 
         List<UserDTO> result =userService.getAllById(userIds);
 
-        assertThat(result).isNotEmpty();
-        assertThat(result).hasSize(1);
+        assertThat(result).isNotEmpty().hasSize(1);
         assertThat(result.getFirst().getId()).isEqualTo(1L);
         assertThat(result.getFirst().getName()).isEqualTo("Ivan");
 

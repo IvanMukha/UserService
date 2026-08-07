@@ -176,7 +176,7 @@ class UserControllerTest extends AbstractIntegrationTest {
         User user1 = userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
         User user2 = userRepository.save(userEntity("myEmail2@gmail.com", "John", "Doe"));
         User user3 = userRepository.save(userEntity("myEmail3@gmail.com", "Alan", "Smith"));
-        User user4 = userRepository.save(userEntity("myEmail4@gmail.com", "Ivan", "NeMukha"));
+        userRepository.save(userEntity("myEmail4@gmail.com", "Ivan", "NeMukha"));
 
         String idsParam = user1.getId() + "," + user2.getId() + "," + user3.getId();
 
