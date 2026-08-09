@@ -50,6 +50,7 @@ public class UserController {
     }
 
     @GetMapping("/by-email")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<UserDTO> getUserByEmail(@RequestParam String email) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getByEmail(email));
     }
