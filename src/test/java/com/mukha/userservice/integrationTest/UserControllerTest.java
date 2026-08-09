@@ -152,6 +152,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getByEmail_shouldReturnUser_whenExists() throws Exception {
         User saved = userRepository.save(userEntity("myEmail@gmail.com", "Ivan", "Mukha"));
 
@@ -165,6 +166,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getByEmail_shouldReturn404_whenNotExists() throws Exception {
         mockMvc.perform(get(BASE_URL + "/by-email")
                         .param("email", "notExistEmail@gmail.com"))
