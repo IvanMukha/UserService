@@ -174,6 +174,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAllByUserId_shouldReturnAllUsers_whenUserExists() throws Exception {
         User user1 = userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
         User user2 = userRepository.save(userEntity("myEmail2@gmail.com", "John", "Doe"));
@@ -192,6 +193,7 @@ class UserControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "admin")
     void getAllByUserId_shouldReturnEmptyList_whenUserNotExists() throws Exception {
         userRepository.save(userEntity("myEmail1@gmail.com", "Ivan", "Mukha"));
         userRepository.save(userEntity("myEmail2@gmail.com", "John", "Doe"));
