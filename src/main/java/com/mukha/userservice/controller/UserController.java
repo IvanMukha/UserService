@@ -62,6 +62,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateById(id, userDTO));
     }
     @GetMapping("/batch")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<List<UserDTO>> getUsersByIds(@RequestParam("ids") List<Long> userIds){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllById(userIds));
     }
