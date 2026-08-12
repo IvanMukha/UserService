@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/v1/api/users")
 public class UserController {
     private final UserService userService;
 
@@ -49,7 +49,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll(name, surname, pageable));
     }
 
-    @GetMapping("/by-email")
+    @GetMapping("/email")
     @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<UserDTO> getUserByEmail(@RequestParam String email) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getByEmail(email));

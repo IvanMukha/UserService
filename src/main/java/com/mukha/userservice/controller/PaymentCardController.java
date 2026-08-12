@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/cards")
+@RequestMapping("/v1/api/cards")
 public class PaymentCardController {
     private final PaymentCardService paymentCardService;
 
