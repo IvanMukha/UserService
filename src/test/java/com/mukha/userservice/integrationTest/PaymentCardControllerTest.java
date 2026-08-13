@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PaymentCardControllerTest extends AbstractIntegrationTest {
-    private static final String BASE_URL = "/api/cards";
+    private static final String BASE_URL = "/v1/api/cards";
 
     @Autowired
     private MockMvc mockMvc;

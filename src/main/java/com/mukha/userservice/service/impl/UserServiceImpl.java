@@ -21,6 +21,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -57,6 +59,22 @@ public class UserServiceImpl implements UserService {
                     return new UserNotFoundException(id);
                 });
         return userMapper.toDTO(foundUser);
+    }
+    @Override
+    public UserDTO getByEmail(String email){
+        log.debug("Fetching user by email: {}", email);
+        User foundUser = userRepository.findByEmail(email).orElseThrow(()->{
+            log.warn("User with email: {} not found", email);
+            return new UserNotFoundException(email);
+        });
+        return userMapper.toDTO(foundUser);
+    }
+
+    @Override
+    public List<UserDTO> getAllById(List<Long> userIds) {
+        log.debug("Fetching all users with ids: {}", userIds);
+        List<User> foundUsers= userRepository.findAllById(userIds);
+        return foundUsers.stream().map(userMapper::toDTO).toList();
     }
 
     @Override

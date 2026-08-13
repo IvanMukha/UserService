@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -110,6 +111,58 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.getById(999L))
                 .isInstanceOf(UserNotFoundException.class);
 
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
+    void getByEmail_shouldReturnUser_whenUserExists() {
+        when(userRepository.findByEmail("myEmail@gmail.com")).thenReturn(Optional.of(user));
+        when(userMapper.toDTO(user)).thenReturn(userDTO);
+
+        UserDTO result = userService.getByEmail("myEmail@gmail.com");
+
+        assertThat(result).isEqualTo(userDTO);
+    }
+
+    @Test
+    void getByEmail_shouldThrowException_whenNotFound() {
+        when(userRepository.findByEmail("myEmail@gmail.com")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getByEmail("myEmail@gmail.com"))
+                .isInstanceOf(UserNotFoundException.class);
+
+        verifyNoInteractions(userMapper);
+    }
+    @Test
+    void getAllByUserId_shouldReturnListOfUsers(){
+        List<Long> userIds = List.of(1L, 2L, 3L);
+
+        when(userRepository.findAllById(userIds)).thenReturn(List.of(user));
+        when(userMapper.toDTO(user)).thenReturn(userDTO);
+
+        List<UserDTO> result =userService.getAllById(userIds);
+
+        assertThat(result).isNotEmpty().hasSize(1);
+        assertThat(result.getFirst().getId()).isEqualTo(1L);
+        assertThat(result.getFirst().getName()).isEqualTo("Ivan");
+
+        verify(userRepository, times(1)).findAllById(userIds);
+        verify(userMapper, times(1)).toDTO(user);
+        }
+
+    @Test
+    void getAllByUserId_shouldReturnEmptyList_WhenNoUsersMatch(){
+        List<Long> userIds = List.of(997L, 998L, 999L);
+
+        when(userRepository.findAllById(userIds)).thenReturn(List.of());
+
+        List<UserDTO> result = userService.getAllById(userIds);
+
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+
+        verify(userRepository, times(1)).findAllById(userIds);
         verifyNoInteractions(userMapper);
     }
 
